@@ -1,8 +1,8 @@
 {
   "build": {
-    "installCommand": "pip install --no-cache-dir -r requirements.txt",
     "aptPackages": [
-      "default-libmysqlclient-dev"
+      "default-libmysqlclient-dev",
+      "build-essential"
     ]
   }
 }
