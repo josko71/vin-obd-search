@@ -1,0 +1,11 @@
+# Virtualno okolje
+venv/
+*.pyc
+__pycache__/
+
+# Občutljivi podatki
+.env
+
+# Statične datoteke in medijske datoteke, ki se lahko generirajo
+/static_root/
+/media/

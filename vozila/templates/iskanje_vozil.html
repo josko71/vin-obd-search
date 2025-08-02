@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iskanje vozil</title>
+    <style>
+        /* Osnovni CSS, prilagodite po potrebi */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; /* Odstrani privzeti margin bodyja */
+            padding: 20px; /* Dodaj padding celotnemu bodyju */
+            background-color: #f4f4f4;
+            color: #333;
+            box-sizing: border-box; /* Vključi padding v širino in višino bodyja */
+        }
+
+        .container {
+            max-width: 900px; /* Omeji maksimalno širino vsebine */
+            margin: 0 auto; /* Centriraj vsebino */
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: calc(100% - 20px); /* 100% minus 2x10px padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ključno: padding in border vključena v širino */
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap; /* Omogoči zlom vrstice na manjših zaslonih */
+        }
+
+        .form-row .form-group {
+            flex: 1; /* Omogoči, da se elementi raztegnejo */
+            min-width: 150px; /* Minimalna širina za posamezno polje v vrstici */
+            margin-bottom: 0;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block; /* Gumb zavzame celo širino */
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 20px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .results {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .result-item {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column; /* Elementi znotraj se zlagajo navpično */
+        }
+
+        .result-item h3 {
+            margin-top: 0;
+            color: #0056b3;
+            /* Besedilo se bo zdaj prelomilo */
+            max-width: 100%; /* Poskrbite, da h3 ne bo šel preko širine starša */
+            word-wrap: break-word; /* Pomembno: omogoči prelom dolgih besed v naslovu */
+        }
+
+        .result-item p {
+            margin-bottom: 5px;
+            word-wrap: break-word; /* Omogoči prelom dolgih besed */
+        }
+
+        .no-results {
+            color: #888;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* Kontejner za postavitev besedila in predogledov v vrstico */
+        .info-and-previews {
+            display: flex;
+            align-items: flex-start; /* Poravnaj vsebino na vrh */
+            gap: 20px; /* Povečan razmik med informacijami in predogledi */
+            flex-wrap: wrap; /* Omogoči prelom, če ni dovolj prostora */
+            width: 100%; /* Zavzame celotno širino result-itema */
+        }
+
+        .text-info {
+            flex: 1; /* Besedilo naj zavzame čim več prostora */
+            min-width: 280px; /* Povečana minimalna širina za besedilo */
+        }
+
+        .illustration-previews-wrapper {
+            display: flex; /* Kontejner za predoglede, da so vzporedno */
+            gap: 10px; /* Razmik med posameznimi predogledi */
+            align-items: flex-start; /* Poravnaj predoglede na vrh */
+            margin-left: auto; /* Potisne predoglede na desno, če je dovolj prostora */
+            flex-shrink: 0; /* Preprečuje zmanjšanje širine kontejnerja slik */
+            flex-wrap: wrap; /* Omogoči prelom predogledov, če ni prostora */
+            justify-content: flex-end; /* Poravnaj predoglede desno, ko se prelomijo */
+        }
+
+        /* Stil za predoglede slik */
+        .illustration-preview {
+            border: 1px solid #ddd;
+            padding: 5px;
+            background-color: #fff;
+            text-align: center;
+            width: 100px; /* Fiksna širina predogleda */
+            height: 100px; /* Fiksna višina predogleda */
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; /* Preprečuje zmanjšanje, ko ni dovolj prostora */
+        }
+        .illustration-preview img {
+            max-width: 100%;
+            max-height: 70%; /* Maksimalna višina slike znotraj predogleda */
+            width: auto;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            margin: 0 auto; /* Centriraj sliko v previewu */
+        }
+        .illustration-preview-label {
+            font-size: 0.7em;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        /* Stil za gumbe za prikaz/skrij ilustracije */
+        .button-group {
+            display: flex; /* Gumba postavite v isto vrsto */
+            justify-content: center; /* Centriraj gumba znotraj skupine */
+            gap: 10px; /* Razmik med gumbi */
+            margin-top: 15px; /* Razmik od predhodne vsebine */
+            flex-wrap: wrap; /* Omogoči zlom vrstice na manjših zaslonih */
+            width: 100%; /* Zavzame celotno širino */
+        }
+
+        .toggle-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            flex-grow: 1; /* Gumbu omogoči, da zasede razpoložljiv prostor */
+            box-sizing: border-box; /* Vključi padding in border v širino */
+            white-space: nowrap; /* Prepreči prelom besedila znotraj gumba */
+            text-align: center; /* Centriraj besedilo znotraj gumba */
+            /* Na desktopu, če sta dva gumba, ju omeji na skoraj polovico širine */
+            max-width: calc(50% - 5px); /* Pol širine minus pol gap-a */
+        }
+        .toggle-btn:hover { background-color: #0056b3; }
+
+        /* Posebno pravilo za posamezen gumb, če jih je v skupini samo 1 */
+        .button-group.single-button .toggle-btn {
+            max-width: 100%; /* En sam gumb zavzame celotno širino */
+        }
+        
+        /* Stil za polne ilustracije */
+        .full-illustration {
+            display: none; /* Skrij privzeto */
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background-color: #fff;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .full-illustration img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px auto; /* Centriraj sliko in dodaj spodnji rob */
+        }
+        .full-illustration p {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Media Query za manjše zaslone */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* Manj paddinga na zelo majhnih zaslonih */
+            }
+            .container {
+                padding: 15px;
+            }
+            .form-row {
+                flex-direction: column; /* Form row elements stack on small screens */
+                gap: 0;
+            }
+            .form-row .form-group {
+                min-width: unset;
+                margin-bottom: 15px; /* Dodaj margin, ko se zlagajo */
+            }
+            .info-and-previews {
+                flex-direction: column; /* Info in predogledi se zlagajo navpično */
+                align-items: center; /* Centriraj jih */
+                gap: 15px;
+            }
+            .text-info, .illustration-previews-wrapper {
+                width: 100%;
+                min-width: unset;
+            }
+            .illustration-previews-wrapper {
+                justify-content: center; /* Centriraj predoglede, ko so v stolpcu */
+            }
+            .button-group {
+                flex-direction: column; /* Gumba se podata drug pod drugega */
+                align-items: center; /* Centriraj gumba */
+            }
+            .toggle-btn {
+                width: 100%; /* Gumbi zasedejo celotno širino */
+                max-width: none; /* Odstrani kakršnokoli maksimalno širino */
+                white-space: normal; /* Besedilo se lahko prelomi na mobilnih napravah */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Iskanje lokacije VIN/OBD</h1>
+
+        <form method="GET" action="">
+            <h2>Išči po:</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="znamka_select">Znamka:</label>
+                    <select id="znamka_select" name="znamka">
+                        <option value="">-- Izberi znamko --</option>
+                        {# Možnosti bodo dodane z JavaScriptom #}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tip_vozila_select">Tip Vozila:</label>
+                    <select id="tip_vozila_select" name="tip_vozila">
+                        <option value="">-- Izberi tip vozila --</option>
+                        {% for tip in tipi_vozil %}
+                            <option value="{{ tip.id }}" {% if selected_tip_vozila_id|iriencode == tip.id|iriencode %}selected{% endif %}>{{ tip.ime }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="model_select">Model:</label>
+                <select id="model_select" name="model">
+                    <option value="">-- Izberi model --</option>
+                    {# Možnosti bodo naložene dinamično z AJAX #}
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="leto_od">Leto izdelave od:</label>
+                    <input type="number" name="leto_od" id="leto_od" value="{{ leto_od|default_if_none:'' }}" placeholder="Npr. 2000">
+                </div>
+                <div class="form-group">
+                    <label for="leto_do">Leto izdelave do:</label>
+                    <input type="number" name="leto_do" id="leto_do" value="{{ leto_do|default_if_none:'' }}" placeholder="Npr. 2015">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="vin_lokacija_opis_query">Ključna beseda za VIN lokacijo:</label>
+                <input type="text" name="vin_lokacija_opis_query" id="vin_lokacija_opis_query" value="{{ vin_lokacija_opis_query|default_if_none:'' }}" placeholder="Npr. 'motor', 'prtljažnik'">
+            </div>
+            <div class="form-group">
+                <label for="obd_lokacija_opis_query">Ključna beseda za OBD lokacijo:</label>
+                <input type="text" name="obd_lokacija_opis_query" id="obd_lokacija_opis_query" value="{{ obd_lokacija_opis_query|default_if_none:'' }}" placeholder="Npr. 'volan', 'sredinska konzola'">
+            </div>
+
+            <button type="submit">Išči vozila</button>
+        </form>
+
+        <h2>Rezultati iskanja:</h2>
+        <div class="results"> {# Dodana posoda za rezultate #}
+            {% if results %}
+                {% for podrobnost in results %}
+                    <div class="result-item">
+                        <div class="info-and-previews">
+                            <div class="text-info">
+                                <h3>
+                                    {{ podrobnost.car_model.znamka.ime }} {{ podrobnost.car_model.ime }}
+                                    {% if podrobnost.leto_od or podrobnost.leto_do %}
+                                        ({% if podrobnost.leto_od %}{{ podrobnost.leto_od }}{% endif %}{% if podrobnost.leto_od and podrobnost.leto_do %}&nbsp;-&nbsp;{% elif podrobnost.leto_od and not podrobnost.leto_do %}&nbsp;-{% endif %}{% if podrobnost.leto_do %}{{ podrobnost.leto_do }}{% endif %})
+                                    {% endif %}
+                                </h3>
+                                <p><strong>Tip vozila:</strong> {{ podrobnost.car_model.tip_vozila.ime|default:"N/A" }}</p>
+                                <p><strong>VIN lokacija:</strong> {{ podrobnost.lokacija_vin_opis.opis|default:"N/A" }}</p>
+                                <p><strong>OBD lokacija:</strong> {{ podrobnost.lokacija_obd_opis.opis|default:"N/A" }}</p>
+                            </div>
+                            
+                            {# Predogled ilustracij, če obstajajo, na desni #}
+                            <div class="illustration-previews-wrapper">
+                                {% if podrobnost.ilustracija_vin %}
+                                    <div class="illustration-preview" onclick="toggleFullIllustration('vin_illustration_full_{{ podrobnost.id }}')">
+                                        <img src="{{ podrobnost.ilustracija_vin.slika.url }}" alt="VIN Predogled" loading="lazy">
+                                        <div class="illustration-preview-label">VIN</div>
+                                    </div>
+                                {% endif %}
+                                {% if podrobnost.ilustracija_obd %}
+                                    <div class="illustration-preview" onclick="toggleFullIllustration('obd_illustration_full_{{ podrobnost.id }}')">
+                                        <img src="{{ podrobnost.ilustracija_obd.slika.url }}" alt="OBD Predogled" loading="lazy">
+                                        <div class="illustration-preview-label">OBD</div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div> {# End info-and-previews #}
+
+                        {# Gumbi za prikaz/skrij večjih ilustracij #}
+                        <div class="button-group {% if not podrobnost.ilustracija_vin or not podrobnost.ilustracija_obd %}single-button{% endif %}">
+                            {% if podrobnost.ilustracija_vin %}
+                                <button type="button" class="toggle-btn" onclick="toggleFullIllustration('vin_illustration_full_{{ podrobnost.id }}')">Prikaži/Skrij VIN</button>
+                            {% endif %}
+                            {% if podrobnost.ilustracija_obd %}
+                                <button type="button" class="toggle-btn" onclick="toggleFullIllustration('obd_illustration_full_{{ podrobnost.id }}')">Prikaži/Skrij OBD</button>
+                            {% endif %}
+                        </div>
+                        
+                        {# Večje ilustracije, ki se prikažejo ob kliku #}
+                        {% if podrobnost.ilustracija_vin %}
+                            <div id="vin_illustration_full_{{ podrobnost.id }}" class="full-illustration">
+                                <img src="{{ podrobnost.ilustracija_vin.slika.url }}" alt="VIN Lokacija Ilustracija" loading="lazy">
+                                <p><strong>VIN lokacija:</strong> {{ podrobnost.ilustracija_vin.opis|default:"N/A" }}</p>
+                            </div>
+                        {% endif %}
+                        {% if podrobnost.ilustracija_obd %}
+                            <div id="obd_illustration_full_{{ podrobnost.id }}" class="full-illustration">
+                                <img src="{{ podrobnost.ilustracija_obd.slika.url }}" alt="OBD Lokacija Ilustracija" loading="lazy">
+                                <p><strong>OBD lokacija:</strong> {{ podrobnost.ilustracija_obd.opis|default:"N/A" }}</p>
+                            </div>
+                        {% endif %}
+
+                        {% if podrobnost.opombe %}<p><strong>Opombe:</strong> {{ podrobnost.opombe }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-results">Ni najdenih vozil, ki bi ustrezala vašim kriterijem iskanja.</p>
+            {% endif %}
+        </div> {# End results #}
+    </div> {# End container #}
+
+    {# JSON podatki za znamke in modele. Uporabite json_script filter za varno vstavljanje. #}
+    {{ popularne_znamke_data|json_script:"popularne_znamke_data_json" }}
+    {{ ostale_znamke_data|json_script:"ostale_znamke_data_json" }}
+    {{ znamke_po_tipu|json_script:"znamke_po_tipu_json" }}
+    {{ all_znamke_data|json_script:"all_znamke_data_json" }}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var $znamkaSelect = $('#znamka_select');
+            var $tipVozilaSelect = $('#tip_vozila_select');
+            var $modelSelect = $('#model_select');
+
+            // Store initial query values for re-selection after AJAX
+            const urlParams = new URLSearchParams(window.location.search);
+            var initialZnamkaId = urlParams.get('znamka') || '';
+            var initialTipVozilaId = urlParams.get('tip_vozila') || '';
+            var initialModelId = urlParams.get('model') || '';
+
+            // Pridobite podatke iz json_script tagov
+            var popularneZnamkeData = JSON.parse(document.getElementById('popularne_znamke_data_json').textContent);
+            var ostaleZnamkeData = JSON.parse(document.getElementById('ostale_znamke_data_json').textContent);
+            var znamkePoTipu = JSON.parse(document.getElementById('znamke_po_tipu_json').textContent);
+            var allZnamkeData = JSON.parse(document.getElementById('all_znamke_data_json').textContent);
+
+            // Funkcija za posodobitev spustnega seznama znamk
+            function populateZnamkeSelect(filteredZnamkeIds = null) {
+                $znamkaSelect.empty();
+                $znamkaSelect.append($('<option></option>').val('').text('-- Izberi znamko --'));
+
+                let currentPopularneZnamke = [];
+                let currentOstaleZnamke = [];
+
+                if (filteredZnamkeIds !== null) { // Filter je bil uporabljen
+                    let filteredAllZnamke = allZnamkeData.filter(znamka => filteredZnamkeIds.includes(znamka.id));
+                    currentPopularneZnamke = filteredAllZnamke.filter(znamka =>
+                        popularneZnamkeData.some(p => p.id === znamka.id)
+                    );
+                    currentOstaleZnamke = filteredAllZnamke.filter(znamka =>
+                        ostaleZnamkeData.some(o => o.id === znamka.id)
+                    );
+                } else { // Brez filtra, uporabi vse
+                    currentPopularneZnamke = popularneZnamkeData;
+                    currentOstaleZnamke = ostaleZnamkeData;
+                }
+
+                // Dodaj popularne znamke
+                if (currentPopularneZnamke.length > 0) {
+                    $znamkaSelect.append($('<option disabled></option>').text('- Najpopularnejše -'));
+                    currentPopularneZnamke.sort((a, b) => a.ime.localeCompare(b.ime));
+                    $.each(currentPopularneZnamke, function(index, znamka) {
+                        $znamkaSelect.append($('<option></option>').val(znamka.id).text(znamka.ime));
+                    });
+                }
+
+                // Dodaj ostale znamke
+                if (currentOstaleZnamke.length > 0) {
+                    if (currentPopularneZnamke.length > 0) { // Dodaj separator, če so bile popularne
+                        $znamkaSelect.append($('<option disabled></option>').text('- Vse znamke -'));
+                    }
+                    currentOstaleZnamke.sort((a, b) => a.ime.localeCompare(b.ime));
+                    $.each(currentOstaleZnamke, function(index, znamka) {
+                        $znamkaSelect.append($('<option></option>').val(znamka.id).text(znamka.ime));
+                    });
+                }
+                
+                // Ponovno izberi predhodno izbrano znamko
+                if (initialZnamkaId && $znamkaSelect.find('option[value="' + initialZnamkaId + '"]').length > 0) {
+                    $znamkaSelect.val(initialZnamkaId);
+                } else {
+                    initialZnamkaId = ''; // Resetiraj, če ni veljavne opcije
+                    $znamkaSelect.val('');
+                }
+            }
+
+            // Funkcija za nalaganje modelov
+            function loadModels() {
+                var znamkaId = $znamkaSelect.val();
+                var tipVozilaId = $tipVozilaSelect.val(); 
+
+                $modelSelect.empty();
+                $modelSelect.append($('<option></option>').val('').text('-- Izberi model --'));
+
+                // Naloži modele le, če je izbrana znamka ALI tip vozila
+                if (!znamkaId && !tipVozilaId) {
+                    return; // Nič za nalaganje, če nista izbrana ne znamka ne tip
+                }
+                
+                $.ajax({
+                    url: "/ajax/get_models/",
+                    data: {
+                        znamka_id: znamkaId,        
+                        tip_vozila_id: tipVozilaId  
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $.each(data, function(key, value) {
+                            $modelSelect.append($('<option></option>').val(value.id).text(value.name));
+                        });
+                        // Ponovno izberi model, če je bil predhodno izbran in je veljaven z novimi filtri
+                        // To je ključno za ponovno izbiro ob osvežitvi/prvem nalaganju
+                        if (initialModelId && $modelSelect.find('option[value="' + initialModelId + '"]').length > 0) {
+                             $modelSelect.val(initialModelId);
+                        } else {
+                            // Če prejšnji model ni več na voljo, ga resetiraj
+                            initialModelId = '';
+                            $modelSelect.val('');
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error("AJAX Error: ", textStatus, errorThrown);
+                        $modelSelect.empty();
+                        $modelSelect.append($('<option></option>').val('').text('Napaka pri nalaganju modelov'));
+                    }
+                });
+            }
+
+            // Funkcija za filtriranje znamk glede na izbran tip vozila
+            function filterZnamkeByTip() {
+                var selectedTipId = $tipVozilaSelect.val();
+                if (selectedTipId) {
+                    var relevantZnamkeIds = znamkePoTipu[selectedTipId] || [];
+                    populateZnamkeSelect(relevantZnamkeIds);
+                } else {
+                    populateZnamkeSelect(null); // Prikaži vse znamke, če tip ni izbran
+                }
+                loadModels(); // Ključno: Naloži modele po filtriranju znamk in ob spremembi tipa
+            }
+
+            // Začetna inicializacija ob nalaganju strani
+            // Pomembno: Vrstni red klicanja ob nalaganju strani
+            populateZnamkeSelect(); // Najprej napolni znamke
+            
+            // Ponovno naloži znamke in modele, če so parametri v URL-ju
+            // Kličemo filterZnamkeByTip, če je izbran tip, da se filtrirajo znamke IN modeli.
+            // Če je izbrana samo znamka, kličemo samo loadModels.
+            if (initialTipVozilaId) {
+                $tipVozilaSelect.val(initialTipVozilaId);
+                filterZnamkeByTip(); // To bo poklicalo populateZnamkeSelect in loadModels
+            } else if (initialZnamkaId) {
+                $znamkaSelect.val(initialZnamkaId); // Nastavi znamko, preden naložiš modele
+                loadModels(); // Samo naloži modele, če ni izbran tip
+            }
+            // POZOR: initialModelId se obravnava znotraj loadModels() function
+
+
+            // Bind change dogodki
+            $tipVozilaSelect.change(filterZnamkeByTip); 
+            $znamkaSelect.change(loadModels); 
+
+            // Funkcija za prikaz/skrij celotne ilustracije
+            window.toggleFullIllustration = function(id) {
+                var element = document.getElementById(id);
+                if (element.style.display === "none" || element.style.display === "") {
+                    element.style.display = "block";
+                } else {
+                    element.style.display = "none";
+                }
+            };
+        });
+    </script>
+</body>
+</html>
