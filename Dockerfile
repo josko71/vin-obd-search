@@ -7,10 +7,8 @@ WORKDIR /app
 # Namestimo sistemske odvisnosti za mysqlclient
 # To je ključni del, ki rešuje vašo težavo
 RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
+    libpq-dev \
     build-essential \
-    gcc \
-    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 # Kopiramo requirements.txt in namestimo Python odvisnosti
