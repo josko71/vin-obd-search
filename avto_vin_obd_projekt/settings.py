@@ -5,6 +5,10 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Uporaba os.path.join, da zagotovimo delovanje na različnih operacijskih sistemih
+STATIC_URL = '/static/'
+STATIC_ROOT = '/app/static_root' # To bo mapa, kamor bo collectstatic zbral datoteke
+
 # ... ostale nastavitve
 
 SECRET_KEY = config('SECRET_KEY', default='nek-privzet-kljuc-za-razvoj-ni-varno-za-produkcijo')
@@ -108,9 +112,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# Uporaba os.path.join, da zagotovimo delovanje na različnih operacijskih sistemih
-STATIC_URL = '/static/'
-#STATIC_ROOT = '/app/static_root' # To bo mapa, kamor bo collectstatic zbral datoteke
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
