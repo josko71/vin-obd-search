@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
 DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@host:port/dbname')
 
 DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL)
+    'default': dj_database_url.parse(config('DATABASE_URL', default='postgres://josko:196Guer@localhost:5432/avto_net_db'))
 }
 
 
