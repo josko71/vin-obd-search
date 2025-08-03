@@ -39,7 +39,10 @@ COPY --from=build-stage /app/manage.py .
 COPY --from=build-stage /app/requirements.txt .
 
 # Dodamo statične datoteke
-COPY --from=build-stage /app/collected-static /app/collected-static
+COPY --from=build-stage /app/static_root /app/static_root
+
+# Dodajte to vrstico, da kopirate izvorne statične datoteke
+COPY static /app/static
 
 # Namestimo pakete za zagon - ni treba ponovno nameščati orodij za build
 RUN pip install --no-cache-dir -r requirements.txt
