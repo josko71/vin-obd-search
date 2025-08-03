@@ -39,7 +39,7 @@ COPY --from=build-stage /app/manage.py .
 COPY --from=build-stage /app/requirements.txt .
 
 # Dodamo statične datoteke
-COPY --from=build-stage /app/static /app/static
+COPY --from=build-stage /app/staticfiles /app/staticfiles
 COPY --from=build-stage /app/collected-static /app/collected-static
 
 # Namestimo pakete za zagon - ni treba ponovno nameščati orodij za build
