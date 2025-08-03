@@ -68,7 +68,7 @@ DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@host:por
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL')
+        default=config('DATABASE_URL', default='postgres://user:password@localhost:5432/mydatabase')
     )
 }
 
