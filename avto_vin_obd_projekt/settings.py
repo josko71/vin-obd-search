@@ -19,7 +19,7 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
 
 # Dovoljeni gostitelji za lokalni razvoj in Railway
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'vin-obd-search-production.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'vin-obd-search.up.railway.app']
 
 #ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1, .localhost, .railway.app').split(',')
 
