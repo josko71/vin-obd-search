@@ -16,7 +16,7 @@ SECRET_KEY = config('SECRET_KEY', default='nek-privzet-kljuc-za-razvoj-ni-varno-
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=str).split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1, .localhost, .railway.app').split(',')
 
 
 # Application definition
