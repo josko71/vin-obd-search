@@ -21,7 +21,7 @@ COPY . .
 # Nastavimo okoljske spremenljivke
 ENV DJANGO_SETTINGS_MODULE=avto_vin_obd_projekt.settings
 
-ENV SECRET_KEY="@yotru3&qw7%sqih7qbw@9(n1%pl+q4z#wo3*5ife7jjc"
+
 
 # Zberemo statične datoteke
 RUN python manage.py collectstatic --noinput
