@@ -8,9 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Glavni URL za prikaz strani za iskanje vozil
     # To je pot, ki jo brskalnik zahteva: http://127.0.0.1:8000/iskanje/
-    path('iskanje/', include('vozila.urls')),  # Vključite URL-je iz aplikacije 'vozila'
-    # URL za AJAX klic, ki ga uporablja JavaScript za pridobivanje modelov
-    # To je pot, ki jo Javascript kliče: /ajax/get_models/
+    path('', include('vozila.urls')),  # Vključite URL-je iz aplikacije 'vozila'
     path('ajax/get_models/', vozila_views.get_models_ajax, name='get_models_ajax'),  # Vključite URL-je iz aplikacije 'vozila'
 ]
 
