@@ -18,6 +18,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Kopiramo preostalo kodo projekta
 COPY . .
 
+# Izvedemo migracije, da ustvarimo tabele v bazi podatkov
+RUN python manage.py makemigrations
+RUN python manage.py migrate
+
+# Zberemo statične datoteke
+RUN python manage.py collectstatic --noinput
+
 # Zberemo statične datoteke - to se zgodi med buildom
 # Uporabimo --noinput, da se izognemo interaktivnim vprašanjem
 RUN python manage.py collectstatic --noinput
