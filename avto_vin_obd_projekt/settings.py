@@ -6,8 +6,6 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ... ostale nastavitve
-STATIC_URL = '/static/' # URL za dostop do statičnih datotek
-STATIC_ROOT = BASE_DIR / "collected-static" # Mapa, kamor bo collectstatic zbral datoteke
 
 SECRET_KEY = config('SECRET_KEY', default='nek-privzet-kljuc-za-razvoj-ni-varno-za-produkcijo')
 
@@ -38,6 +36,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -72,11 +71,8 @@ WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
 DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@host:port/dbname')
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL', default='postgres://user:password@localhost:5432/mydatabase')
-    )
+    'default': dj_database_url.config()
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
