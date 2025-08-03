@@ -6,14 +6,12 @@ FROM python:3.12-slim as build-stage
 WORKDIR /app
 
 # Namestimo sistemske odvisnosti za PostgreSQL
-# Uporabimo en ukaz RUN, da zmanjšamo število slojev in počistimo cache
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Kopiramo requirements.txt in namestimo Python odvisnosti
-# To je ključen korak, da se izkoristi caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -25,26 +23,22 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # Stage 2: Final stage (Runtime)
-# Uporabimo še manjšo Python sliko za končno okolje, ki ne potrebuje orodij za build
+# Uporabimo še manjšo Python sliko za končno okolje
 FROM python:3.12-slim
 
 # Nastavimo delovni direktorij
 WORKDIR /app
 
 # Kopiramo samo tisto, kar je potrebno za zagon aplikacije iz prve faze
-# To vključuje Python kodo, statične datoteke in manage.py
 COPY --from=build-stage /app/avto_vin_obd_projekt /app/avto_vin_obd_projekt
 COPY --from=build-stage /app/vozila /app/vozila
 COPY --from=build-stage /app/manage.py .
 COPY --from=build-stage /app/requirements.txt .
 
-# Dodamo statične datoteke
+# Kopiramo zbrane statične datoteke v končno sliko
 COPY --from=build-stage /app/static_root /app/static_root
 
-# Dodajte to vrstico, da kopirate izvorne statične datoteke
-COPY static /app/static
-
-# Namestimo pakete za zagon - ni treba ponovno nameščati orodij za build
+# Namestimo pakete za zagon
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Nastavimo okoljske spremenljivke
@@ -54,5 +48,4 @@ ENV DJANGO_SETTINGS_MODULE=avto_vin_obd_projekt.settings
 EXPOSE 8000
 
 # Določimo privzeti ukaz za zagon strežnika
-# Gunicorn mora biti v vašem requirements.txt
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "avto_vin_obd_projekt.wsgi:application"]
