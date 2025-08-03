@@ -26,7 +26,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_root') # Mapa, kamor bo collectstat
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+# Uporaba SECRET_KEY iz okoljske spremenljivke na Railwayu,
+# med build procesom pa uporabimo zacasno vrednost
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", 
+    "temporarily-insecure-but-safe-for-build-process"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
