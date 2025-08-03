@@ -15,8 +15,10 @@ SECRET_KEY = config('SECRET_KEY', default='nek-privzet-kljuc-za-razvoj-ni-varno-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+# Dovoljeni gostitelji za lokalni razvoj in Railway
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.railway.app']
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1, .localhost, .railway.app').split(',')
+#ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1, .localhost, .railway.app').split(',')
 
 
 # Application definition
