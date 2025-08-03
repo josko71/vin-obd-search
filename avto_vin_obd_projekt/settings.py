@@ -11,10 +11,10 @@ STATIC_ROOT = '/app/static_root' # To bo mapa, kamor bo collectstatic zbral dato
 
 # ... ostale nastavitve
 
-SECRET_KEY = config('SECRET_KEY', default='nek-privzet-kljuc-za-razvoj-ni-varno-za-produkcijo')
+SECRET_KEY = config('SECRET_KEY', default='@yotrutest1267uz_k8554')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
