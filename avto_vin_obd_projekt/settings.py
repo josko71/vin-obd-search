@@ -109,7 +109,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 # Uporaba os.path.join, da zagotovimo delovanje na različnih operacijskih sistemih
-#STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 #STATIC_ROOT = '/app/static_root' # To bo mapa, kamor bo collectstatic zbral datoteke
 
 # Default primary key field type
