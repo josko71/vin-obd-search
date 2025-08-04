@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Uporaba os.path.join, da zagotovimo delovanje na različnih operacijskih sistemih
 STATIC_URL = '/static/'
-STATIC_ROOT = '/app/static_root' # To bo mapa, kamor bo collectstatic zbral datoteke
+STATIC_ROOT = '/app/static_root'
 
 # ... ostale nastavitve
 
@@ -24,9 +24,6 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
 
 # Dovoljeni gostitelji za lokalni razvoj in Railway
-# Uporaba okoljskih spremenljivk, ki se na Railwayu preberejo samodejno.
-# Na lokalnem okolju, če ni nastavljeno, bo privzeto 'localhost', '127.0.0.1'
-ALLOWED_HOSTS_STR = config('ALLOWED_HOSTS', default='127.0.0.1,localhost')
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'vin-obd-search.up.railway.app']
 
 
@@ -58,7 +55,7 @@ ROOT_URLCONF = 'avto_vin_obd_projekt.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Opcijsko, če imate skupno mapo za templati
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,18 +70,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
 
-
 # Database
-# Konfiguracija baze podatkov za lokalno in produkcijsko okolje.
-# Če je okoljska spremenljivka DATABASE_URL nastavljena (kot na Railwayu),
-# se bo uporabila. Sicer se bo uporabila lokalna konfiguracija.
-try:
+# Ta spremenjena sekcija bo pravilno delovala na Railwayu med fazo gradnje in izvajanja.
+# Na lokalnem okolju, kjer DATABASE_URL ni nastavljen kot okoljska spremenljivka,
+# bo Django uporabil trdo kodirane vrednosti.
+if 'DATABASE_URL' in os.environ:
     DATABASES = {
-        'default': dj_database_url.config(
-            default=config('DATABASE_URL')
-        )
+        'default': dj_database_url.config(conn_max_age=600)
     }
-except ImproperlyConfigured:
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
