@@ -2,6 +2,7 @@ import os
 from decouple import config
 from pathlib import Path
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,9 +24,10 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
 
 # Dovoljeni gostitelji za lokalni razvoj in Railway
+# Uporaba okoljskih spremenljivk, ki se na Railwayu preberejo samodejno.
+# Na lokalnem okolju, če ni nastavljeno, bo privzeto 'localhost', '127.0.0.1'
+ALLOWED_HOSTS_STR = config('ALLOWED_HOSTS', default='127.0.0.1,localhost')
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'vin-obd-search.up.railway.app']
-
-#ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1, .localhost, .railway.app').split(',')
 
 
 # Application definition
@@ -73,12 +75,27 @@ WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
 
 
 # Database
+# Konfiguracija baze podatkov za lokalno in produkcijsko okolje.
+# Če je okoljska spremenljivka DATABASE_URL nastavljena (kot na Railwayu),
+# se bo uporabila. Sicer se bo uporabila lokalna konfiguracija.
+try:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL')
+        )
+    }
+except ImproperlyConfigured:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'avto_net_db',
+            'USER': 'josko',
+            'PASSWORD': '196Guer',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
-DATABASE_URL = config('DATABASE_URL', default='postgres://user:password@host:port/dbname')
-
-DATABASES = {
-    'default': dj_database_url.config()
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
