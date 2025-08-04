@@ -16,6 +16,8 @@ SECRET_KEY = config('SECRET_KEY', default='@yotrutest1267uz_k8554.*GC')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+CSRF_TRUSTED_ORIGINS = ['https://vin-obd-search.up.railway.app']
+
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
