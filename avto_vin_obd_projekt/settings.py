@@ -11,7 +11,7 @@ STATIC_ROOT = '/app/static_root' # To bo mapa, kamor bo collectstatic zbral dato
 
 # ... ostale nastavitve
 
-SECRET_KEY = config('SECRET_KEY', default='@yotrutest1267uz_k8554')
+SECRET_KEY = config('SECRET_KEY', default='@yotrutest1267uz_k8554.*GC')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
