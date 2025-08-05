@@ -1,0 +1,77 @@
+id;opis;je_vin_lokacija;je_obd_lokacija
+68;L1 na okvirju pod sedežem.;True;False
+76;L3 na okvirju krmilne osi (krmilna glava).;True;False
+61;L3 pri krmilnem drogu, na ploščici med krmilom in rezervoarjem.;True;False
+60;L3 v motornem delu, na nosilcu za okrasno plastiko, nad stojalom.;True;False
+63;L5 v naslonu za noge, na okvirju pod gumijasto zaščito, na desni.;True;False
+77;L6 L7 med prednjimi kolesi, na zgornjem delu okvirja, za zaščito.;True;False
+62;L6 L7 pod sedežem, na desni strani okvirja.;True;False
+74;L6 L7 za sprednjim levim kolesom, na spodnjem okvirju, desno.;True;False
+70;M1 M2 na sovoznikovi strani, na loku blatnika pri stopnici, pod pokrovčkom (izvijač).;True;False
+71;M1 M2 pod volanom levo, odvij vijake na pokrovu.;False;True
+64;N1 na sovoznikovi strani, na loku blatnika pri stopnici, pod pokrovčkom (izvijač).;True;False
+53;N1 na tleh, ob sovoznikovem sedežu, pod pokrovčkom (izvijač).;True;False
+44;N1 ob volanu levo, snemi pokrov.;False;True
+72;N1 pod volanom levo, odvij vijake na pokrovu.;False;True
+59;N1 v motornem delu, pod robom požarne stene, na desni.;True;False
+73;N3 za prednjim desnim kolesom, spredaj.;True;False
+65;N3 za prednjim desnim kolesom, zadaj.;True;False
+36;na okvirju šasije, osrednji del.;True;False
+35;na okvirju šasije, sprednji del.;True;False
+37;na okvirju šasije, zadnji del.;True;False
+34;na okvirju šasije, za sprednjim kolesom.;True;False
+38;na okvirju šasije, za zadnjim kolesom.;True;False
+50;na osrednji konzoli, pred naslonom za roke.;False;True
+47;na osrednji konzoli, pred prestavno ročico.;False;True
+45;na osrednji konzoli, pred prestavno ročico, v odložišču.;False;True
+49;na osrednji konzoli, pred prestavno ročico, v odložišču pod gumo.;False;True
+51;na osrednji konzoli, v naslonu za roke.;False;True
+48;na osrednji konzoli, za prestavno ročico.;False;True
+46;na osrednji konzoli, za prestavno ročico, v odložišču.;False;True
+11;na stebričku A, na sovoznikovi strani.;True;False
+14;na stebričku B, na potniški strani.;True;False
+13;na stebričku B, na sovoznikovi strani.;True;False
+15;na stebričku C, na potniški strani.;True;False
+7;na tleh, ob sovoznikovem sedežu.;True;False
+16;na tleh, pod sovoznikovim sedežem.;True;False
+22;na tleh, pod zadnjo klopjo.;True;False
+17;na tleh, pred sovoznikovim sedežem.;True;False
+18;na tleh, pred sovoznikovim sedežem, ob pragu.;True;False
+21;na tleh, pred zadnjo klopjo.;True;False
+20;na tleh, v predelu naslona za noge.;True;False
+19;na tleh, za sovoznikovim sedežem.;True;False
+23;na tleh, za zadnjo klopjo.;True;False
+66;O2 na podvozju, na okvirju šasije, pred desnim kolesom.;True;False
+67;O4 na sprednjem okviru prikolice, v desnem spodnjem kotu.;True;False
+12;pod predalčkom za rokavice, ob A stebričku.;True;False
+42;pod volanom desno.;False;True
+40;pod volanom levo, nad sklopko/zavoro.;False;True
+41;pod volanom levo, ob A stebričku.;False;True
+43;pod volanom levo, odvij vijake na pokrovu.;False;True
+75;pod volanom levo, snemi pokrov.;False;True
+69;T na okvirju šasije, za prvo osjo, pred filtrom, na levi.;True;False
+32;v kabini, na notranji oblogi kolesa, pod pokrovčkom (izvijač).;True;False
+57;v motornem delu, nad požarno steno, na desni.;True;False
+54;v motornem delu, nad požarno steno, na levi.;True;False
+8;v motornem delu, nad požarno steno, na sredini.;True;False
+4;v motornem delu, na nosilcu amortizerja (šalčki).;True;False
+24;v motornem delu, na nosilcu desnega blatnika, na sredini.;True;False
+1;v motornem delu, na nosilcu desnega blatnika, pri A stebričku.;True;False
+2;v motornem delu, na ohišju nosilca amortizerja (kupoli).;True;False
+9;v motornem delu, na požarni steni, na desni.;True;False
+10;v motornem delu, na požarni steni, na levi.;True;False
+5;v motornem delu, na požarni steni, na sredini.;True;False
+25;v motornem delu, na prednjem prečnem nosilcu, nad hladilnikom.;True;False
+58;v motornem delu, pod požarno steno, na desni.;True;False
+56;v motornem delu, pod požarno steno, na levi.;True;False
+55;v motornem delu, pod požarno steno, na sredini.;True;False
+52;v predalčku za rokavice, na sovoznikovi strani.;False;True
+33;v prtljažniku, na zadnjem pragu.;True;False
+26;v prtljažniku, ob rezervnem kolesu, desno.;True;False
+27;v prtljažniku, ob rezervnem kolesu, levo.;True;False
+28;v prtljažniku, ob rezervnem kolesu, spredaj.;True;False
+29;v prtljažniku, ob rezervnem kolesu, zadaj.;True;False
+3;v prtljažniku, pod rezervnim kolesom.;True;False
+30;v prtljažniku, pod rezervnim kolesom, desno.;True;False
+31;v prtljažniku, pod rezervnim kolesom, levo.;True;False
+39;v prtljažniku, v desni bočni steni, pod zaščitnim pokrovom.;True;False

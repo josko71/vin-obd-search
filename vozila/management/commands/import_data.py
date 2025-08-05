@@ -42,7 +42,7 @@ class Command(BaseCommand):
         self.stdout.write(f"Začenjam uvoz podatkov iz {csv_dir}...")
         self.stdout.write("-" * 30)
 
-        # --- Uvoz LokacijaOpis ---
+         # --- Uvoz LokacijaOpis ---
         lokacija_opis_csv_path = os.path.join(csv_dir, 'lokacijaopis.csv')
         self.stdout.write(f"Uvažam LokacijaOpis iz: {lokacija_opis_csv_path}")
         imported_lokacije_count = 0
@@ -52,21 +52,24 @@ class Command(BaseCommand):
                 with transaction.atomic():
                     for row in reader:
                         try:
-                            required_fields = ['id', 'ime']
+                            # Popravljeno: 'ime' v 'opis'
+                            required_fields = ['id', 'opis']
                             if not all(field in row for field in required_fields):
                                 self.stderr.write(self.style.ERROR(f"Vrstica manjka zahtevano polje ali je napačno ime glave v lokacijaopis.csv: {row}. Preskakujem."))
                                 continue
 
                             lokacija_id = int(row['id'])
-                            lokacija_ime = self.clean_string(row['ime']) # Uporabi clean_string
+                            lokacija_opis = self.clean_string(row['opis']) # Uporabi 'opis'
 
                             LokacijaOpis.objects.update_or_create(
                                 id=lokacija_id,
-                                defaults={'ime': lokacija_ime}
+                                # Popravljeno: 'ime' v 'opis'
+                                defaults={'opis': lokacija_opis}
                             )
                             imported_lokacije_count += 1
                         except Exception as e:
-                            self.stderr.write(self.style.ERROR(f"Napaka pri uvozu LokacijaOpis '{row.get('ime', 'N/A')}': {e}. Preskakujem vrstico."))
+                            # Popravljeno: 'ime' v 'opis' v sporočilu o napaki
+                            self.stderr.write(self.style.ERROR(f"Napaka pri uvozu LokacijaOpis '{row.get('opis', 'N/A')}': {e}. Preskakujem vrstico."))
             self.stdout.write(self.style.SUCCESS(f"Uspešno uvoženih/posodobljenih LokacijaOpis: {imported_lokacije_count}"))
         except FileNotFoundError:
             self.stdout.write(self.style.WARNING(f"Opozorilo: Datoteka {lokacija_opis_csv_path} ni najdena. Preskakujem uvoz lokacij opisa."))
