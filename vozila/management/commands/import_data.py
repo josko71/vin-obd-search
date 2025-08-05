@@ -217,8 +217,16 @@ class Command(BaseCommand):
                             self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje ali je napačno ime glave v ilustracije.csv: {row}. Preskakujem."))
                             continue
 
-                        ilustracija_id = int(row['id'])
-                        carmodel_id = int(row['carmodel_id'])
+                        # Robustno ravnanje s praznimi ID-ji
+                        ilustracija_id_str = row['id'].strip()
+                        carmodel_id_str = row['carmodel_id'].strip()
+
+                        if not ilustracija_id_str or not carmodel_id_str:
+                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: ID ali carmodel_id sta prazna. Preskakujem vrstico."))
+                            continue
+
+                        ilustracija_id = int(ilustracija_id_str)
+                        carmodel_id = int(carmodel_id_str)
                         ime_slike = self.clean_string(row['ime_slike'])
 
                         try:
@@ -260,10 +268,19 @@ class Command(BaseCommand):
                             self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje ali je napačno ime glave v vozilopodrobnosti.csv: {row}. Preskakujem."))
                             continue
 
-                        podrobnost_id = int(row['id'])
-                        carmodel_id = int(row['carmodel_id'])
+                        # Robustno ravnanje s praznimi ID-ji
+                        podrobnost_id_str = row['id'].strip()
+                        carmodel_id_str = row['carmodel_id'].strip()
+                        lokacija_opisa_id_str = row['lokacija_opisa_id'].strip()
+
+                        if not podrobnost_id_str or not carmodel_id_str or not lokacija_opisa_id_str:
+                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: ID, carmodel_id ali lokacija_opisa_id je prazen. Preskakujem vrstico."))
+                            continue
+
+                        podrobnost_id = int(podrobnost_id_str)
+                        carmodel_id = int(carmodel_id_str)
+                        lokacija_opisa_id = int(lokacija_opisa_id_str)
                         opis = self.clean_string(row['opis'])
-                        lokacija_opisa_id = int(row['lokacija_opisa_id'])
                         vrednost = self.clean_string(row['vrednost']) if 'vrednost' in row and row['vrednost'].strip() else None
 
                         try:
@@ -298,5 +315,3 @@ class Command(BaseCommand):
         except Exception as e:
             self.stderr.write(self.style.ERROR(f"Kritična napaka pri branju vozilopodrobnosti.csv: {e}"))
         self.stdout.write("-" * 30)
-
-        self.stdout.write(self.style.SUCCESS("Uvoz podatkov zaključen."))
