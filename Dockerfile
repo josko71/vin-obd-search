@@ -39,6 +39,9 @@ COPY --from=build-stage /app/requirements.txt .
 # Kopiramo zbrane statične datoteke v končno sliko
 COPY --from=build-stage /app/static_root /app/static_root
 
+# Kopiramo mapo s podatki
+COPY --from=build-stage /app/data_csv /app/data_csv
+
 # Namestimo pakete za zagon
 RUN pip install --no-cache-dir -r requirements.txt
 
