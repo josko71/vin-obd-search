@@ -71,24 +71,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
 
 # Database
-# Ta spremenjena sekcija bo pravilno delovala na Railwayu med fazo gradnje in izvajanja.
-# Na lokalnem okolju, kjer DATABASE_URL ni nastavljen kot okoljska spremenljivka,
-# bo Django uporabil trdo kodirane vrednosti.
-if 'DATABASE_URL' in os.environ:
-    DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600)
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'avto_net_db',
-            'USER': 'josko',
-            'PASSWORD': '196Guer',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
+# Zamenjava celotne sekcije za bazo podatkov z bolj zanesljivo konfiguracijo
+# ki uporablja dj_database_url
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
+}
 
 
 # Password validation
