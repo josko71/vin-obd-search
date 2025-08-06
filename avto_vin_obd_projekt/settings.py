@@ -1,5 +1,5 @@
 import os
-from decouple import config
+#from decouple import config
 from pathlib import Path
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
@@ -74,8 +74,8 @@ WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
 # Zamenjava celotne sekcije za bazo podatkov z bolj zanesljivo konfiguracijo
 # ki uporablja dj_database_url
 DATABASES = {
-    'default': dj_database_url.parse(
-        config('DATABASE_URL'),
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
         engine='django.db.backends.postgresql'  # DODAJ TO!
     )
 }
