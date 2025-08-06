@@ -1,10 +1,9 @@
 import os
 import csv
 import re
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.conf import settings
-from django.db.models import F
 
 from vozila.models import LokacijaOpis, Znamka, TipVozila, CarModel, Ilustracija, VoziloPodrobnosti
 
@@ -22,8 +21,8 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             '--models',
-            nargs='+',  # Sprejme enega ali več argumentov
-            help='Seznam modelov, ki jih je treba uvoziti (npr. --models CarModel Ilustracija). Če ni navedeno, uvozi vse.',
+            nargs='+',
+            help='Seznam modelov, ki jih je treba uvoziti (npr. --models carmodels ilustracije). Če ni navedeno, uvozi vse.',
             choices=[
                 'lokacijaopis',
                 'znamke',
@@ -80,8 +79,10 @@ class Command(BaseCommand):
                                     defaults={'opis': lokacija_opis}
                                 )
                                 imported_lokacije_count += 1
-                            except Exception as e:
+                            except (ValueError, KeyError, IndexError) as e:
                                 self.stderr.write(self.style.ERROR(f"Napaka pri uvozu LokacijaOpis '{row.get('opis', 'N/A')}': {e}. Preskakujem vrstico."))
+                            except Exception as e:
+                                self.stderr.write(self.style.ERROR(f"Nepričakovana napaka pri uvozu LokacijaOpis '{row.get('opis', 'N/A')}': {e}. Preskakujem vrstico."))
                 self.stdout.write(self.style.SUCCESS(f"Uspešno uvoženih/posodobljenih LokacijaOpis: {imported_lokacije_count}"))
             except FileNotFoundError:
                 self.stdout.write(self.style.WARNING(f"Opozorilo: Datoteka {lokacija_opis_csv_path} ni najdena. Preskakujem uvoz lokacij opisa."))
@@ -103,11 +104,12 @@ class Command(BaseCommand):
                                 if 'ime' not in row:
                                     self.stderr.write(self.style.ERROR(f"Vrstica manjka polje 'ime' v znamke.csv: {row}. Preskakujem."))
                                     continue
-
                                 znamka_ime = self.clean_string(row['ime'])
-                                znamka, created = Znamka.objects.get_or_create(ime=znamka_ime)
-                                if created:
-                                    imported_znamke_count += 1
+                                if not znamka_ime:
+                                    self.stderr.write(self.style.ERROR(f"Vrstica ima prazno polje 'ime'. Preskakujem."))
+                                    continue
+                                Znamka.objects.get_or_create(ime=znamka_ime)
+                                imported_znamke_count += 1
                             except Exception as e:
                                 self.stderr.write(self.style.ERROR(f"Napaka pri uvozu Znamke '{row.get('ime', 'N/A')}': {e}. Preskakujem vrstico."))
                 self.stdout.write(self.style.SUCCESS(f"Uspešno uvoženih/posodobljenih Znamk: {imported_znamke_count}"))
@@ -131,11 +133,12 @@ class Command(BaseCommand):
                                 if 'ime' not in row:
                                     self.stderr.write(self.style.ERROR(f"Vrstica manjka polje 'ime' v tipivozila.csv: {row}. Preskakujem."))
                                     continue
-
                                 tip_ime = self.clean_string(row['ime'])
-                                tip_vozila, created = TipVozila.objects.get_or_create(ime=tip_ime)
-                                if created:
-                                    imported_tipi_count += 1
+                                if not tip_ime:
+                                    self.stderr.write(self.style.ERROR(f"Vrstica ima prazno polje 'ime'. Preskakujem."))
+                                    continue
+                                TipVozila.objects.get_or_create(ime=tip_ime)
+                                imported_tipi_count += 1
                             except Exception as e:
                                 self.stderr.write(self.style.ERROR(f"Napaka pri uvozu TipVozila '{row.get('ime', 'N/A')}': {e}. Preskakujem vrstico."))
                 self.stdout.write(self.style.SUCCESS(f"Uspešno uvoženih/posodobljenih Tipov Vozil: {imported_tipi_count}"))
@@ -150,40 +153,35 @@ class Command(BaseCommand):
             carmodels_csv_path = os.path.join(csv_dir, 'carmodels.csv')
             self.stdout.write(f"Uvažam CarModele iz: {carmodels_csv_path}")
             imported_carmodels_count = 0
-
             self.stdout.write("Nalaganje predpomnilnika znamk in tipov vozil...")
             znamke_cache = {self.clean_string(z.ime).lower(): z for z in Znamka.objects.all()}
             tipi_vozila_cache = {self.clean_string(t.ime).lower(): t for t in TipVozila.objects.all()}
             self.stdout.write("Predpomnilnik naložen.")
-
             try:
                 with open(carmodels_csv_path, 'r', encoding='utf-8-sig') as file:
                     reader = csv.DictReader(file, delimiter=';')
-                    
                     for row_num, row in enumerate(reader, 2):
                         try:
-                            required_fields = ['id', 'ime', 'znamka_ime', 'tip_vozila_ime']
-                            if not all(field in row for field in required_fields):
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje ali je napačno ime glave v carmodels.csv: {row}. Preskakujem."))
+                            required_fields = ['id', 'ime', 'znamka_id', 'tip_vozila_id']
+                            if not all(field in row and row[field].strip() for field in required_fields):
+                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje v carmodels.csv: {row}. Preskakujem."))
                                 continue
-
                             model_id = int(row['id'])
                             model_ime = self.clean_string(row['ime'])
-                            znamka_ime_csv = self.clean_string(row['znamka_ime'])
-                            tip_vozila_ime_csv = self.clean_string(row['tip_vozila_ime'])
-
-                            znamka = znamke_cache.get(znamka_ime_csv.lower())
-                            tip_vozila = tipi_vozila_cache.get(tip_vozila_ime_csv.lower())
-
-                            if not znamka:
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Znamka '{znamka_ime_csv}' ne obstaja v bazi. Preskakujem CarModel vrstico."))
+                            znamka_id_csv = int(row['znamka_id'])
+                            tip_vozila_id_csv = int(row['tip_vozila_id'])
+                            try:
+                                znamka = Znamka.objects.get(id=znamka_id_csv)
+                            except Znamka.DoesNotExist:
+                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Znamka z ID {znamka_id_csv} ne obstaja v bazi. Preskakujem CarModel vrstico."))
                                 continue
-                            if not tip_vozila:
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Tip vozila '{tip_vozila_ime_csv}' ne obstaja v bazi. Preskakujem CarModel vrstico."))
+                            try:
+                                tip_vozila = TipVozila.objects.get(id=tip_vozila_id_csv)
+                            except TipVozila.DoesNotExist:
+                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Tip vozila z ID {tip_vozila_id_csv} ne obstaja v bazi. Preskakujem CarModel vrstico."))
                                 continue
-                            
                             with transaction.atomic():
-                                carmodel, created = CarModel.objects.update_or_create(
+                                CarModel.objects.update_or_create(
                                     id=model_id,
                                     defaults={
                                         'znamka': znamka,
@@ -193,18 +191,11 @@ class Command(BaseCommand):
                                         'tip_vozila': tip_vozila,
                                     }
                                 )
-                                if created:
-                                    imported_carmodels_count += 1
-                                # Povežemo tudi ilustracije in podrobnosti, ki so že v bazi
-                                # To zagotavlja, da so povezave z novimi carmodeli pravilne
-                                # Ilustracija.objects.filter(id__in=...).update(carmodel=carmodel)
-                                # VoziloPodrobnosti.objects.filter(id__in=...).update(carmodel=carmodel)
-
-                        except ValueError as ve:
-                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Napaka pri pretvorbi podatkov (npr. ID ali Leto izdelave): {ve}. Podatki: {row}. Preskakujem CarModel vrstico."))
+                                imported_carmodels_count += 1
+                        except (ValueError, KeyError, IndexError) as ve:
+                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Napaka pri pretvorbi podatkov: {ve}. Podatki: {row}. Preskakujem CarModel vrstico."))
                         except Exception as e:
                             self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Nepričakovana napaka pri uvozu CarModel '{model_ime if 'model_ime' in locals() else 'N/A'}': {e}. Preskakujem CarModel vrstico."))
-
             except FileNotFoundError:
                 self.stdout.write(self.style.WARNING(f"Opozorilo: Datoteka {carmodels_csv_path} ni najdena. Preskakujem uvoz CarModelov."))
             except Exception as e:
@@ -223,39 +214,30 @@ class Command(BaseCommand):
                     for row_num, row in enumerate(reader, 2):
                         try:
                             required_fields = ['id', 'carmodel_id', 'ime_slike']
-                            if not all(field in row for field in required_fields):
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje ali je napačno ime glave v ilustracije.csv: {row}. Preskakujem."))
+                            if not all(field in row and row[field].strip() for field in required_fields):
+                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje v ilustracije.csv: {row}. Preskakujem."))
                                 continue
-
-                            ilustracija_id_str = row.get('id', '').strip()
-                            carmodel_id_str = row.get('carmodel_id', '').strip()
-
-                            if not ilustracija_id_str or not carmodel_id_str:
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: ID ali carmodel_id sta prazna. Preskakujem vrstico."))
-                                continue
-
-                            ilustracija_id = int(ilustracija_id_str)
-                            carmodel_id = int(carmodel_id_str)
-                            ime_slike = self.clean_string(row.get('ime_slike', ''))
-
+                            ilustracija_id = int(row['id'])
+                            carmodel_id = int(row['carmodel_id'])
+                            ime_slike = self.clean_string(row['ime_slike'])
                             try:
                                 carmodel = CarModel.objects.get(id=carmodel_id)
                             except CarModel.DoesNotExist:
                                 self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: CarModel z ID {carmodel_id} za ilustracijo '{ime_slike}' ne obstaja. Preskakujem."))
                                 continue
-                            
                             with transaction.atomic():
-                                ilustracija, created = Ilustracija.objects.update_or_create(
+                                Ilustracija.objects.update_or_create(
                                     id=ilustracija_id,
                                     defaults={
                                         'carmodel': carmodel,
                                         'ime_slike': ime_slike
                                     }
                                 )
-                                if created:
-                                    imported_ilustracije_count += 1
+                                imported_ilustracije_count += 1
+                        except (ValueError, KeyError, IndexError) as ve:
+                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Napaka pri pretvorbi podatkov: {ve}. Podatki: {row}. Preskakujem vrstico."))
                         except Exception as e:
-                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Napaka pri uvozu Ilustracije '{row.get('ime_slike', 'N/A')}': {e}. Preskakujem vrstico."))
+                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Nepričakovana napaka pri uvozu Ilustracije '{row.get('ime_slike', 'N/A')}': {e}. Preskakujem vrstico."))
                 self.stdout.write(self.style.SUCCESS(f"Uspešno uvoženih/posodobljenih Ilustracij: {imported_ilustracije_count}"))
             except FileNotFoundError:
                 self.stdout.write(self.style.WARNING(f"Opozorilo: Datoteka {ilustracije_csv_path} ni najdena. Preskakujem uvoz ilustracij."))
@@ -273,39 +255,27 @@ class Command(BaseCommand):
                     reader = csv.DictReader(file, delimiter=';')
                     for row_num, row in enumerate(reader, 2):
                         try:
-                            required_fields = ['id', 'carmodel_id', 'opis', 'lokacija_opisa_id', 'vrednost']
-                            if not all(field in row for field in required_fields):
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje ali je napačno ime glave v vozilopodrobnosti.csv: {row}. Preskakujem."))
+                            required_fields = ['id', 'carmodel_id', 'opis', 'lokacija_opisa_id']
+                            if not all(field in row and row[field].strip() for field in required_fields):
+                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje v vozilopodrobnosti.csv: {row}. Preskakujem."))
                                 continue
-
-                            podrobnost_id_str = row.get('id', '').strip()
-                            carmodel_id_str = row.get('carmodel_id', '').strip()
-                            lokacija_opisa_id_str = row.get('lokacija_opisa_id', '').strip()
-
-                            if not podrobnost_id_str or not carmodel_id_str or not lokacija_opisa_id_str:
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: ID, carmodel_id ali lokacija_opisa_id je prazen. Preskakujem vrstico."))
-                                continue
-                            
-                            podrobnost_id = int(podrobnost_id_str)
-                            carmodel_id = int(carmodel_id_str)
-                            lokacija_opisa_id = int(lokacija_opisa_id_str)
-                            opis = self.clean_string(row.get('opis', ''))
+                            podrobnost_id = int(row['id'])
+                            carmodel_id = int(row['carmodel_id'])
+                            lokacija_opisa_id = int(row['lokacija_opisa_id'])
+                            opis = self.clean_string(row['opis'])
                             vrednost = self.clean_string(row.get('vrednost', '')) or None
-
                             try:
                                 carmodel = CarModel.objects.get(id=carmodel_id)
                             except CarModel.DoesNotExist:
                                 self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: CarModel z ID {carmodel_id} za podrobnost '{opis}' ne obstaja. Preskakujem."))
                                 continue
-
                             try:
                                 lokacija_opisa = LokacijaOpis.objects.get(id=lokacija_opisa_id)
                             except LokacijaOpis.DoesNotExist:
                                 self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: LokacijaOpis z ID {lokacija_opisa_id} za podrobnost '{opis}' ne obstaja. Preskakujem."))
                                 continue
-                            
                             with transaction.atomic():
-                                podrobnost, created = VoziloPodrobnosti.objects.update_or_create(
+                                VoziloPodrobnosti.objects.update_or_create(
                                     id=podrobnost_id,
                                     defaults={
                                         'carmodel': carmodel,
@@ -314,10 +284,11 @@ class Command(BaseCommand):
                                         'vrednost': vrednost
                                     }
                                 )
-                                if created:
-                                    imported_podrobnosti_count += 1
+                                imported_podrobnosti_count += 1
+                        except (ValueError, KeyError, IndexError) as ve:
+                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Napaka pri pretvorbi podatkov: {ve}. Podatki: {row}. Preskakujem vrstico."))
                         except Exception as e:
-                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Napaka pri uvozu VoziloPodrobnosti '{row.get('opis', 'N/A')}': {e}. Preskakujem vrstico."))
+                            self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Nepričakovana napaka pri uvozu VoziloPodrobnosti '{row.get('opis', 'N/A')}': {e}. Preskakujem vrstico."))
                 self.stdout.write(self.style.SUCCESS(f"Uspešno uvoženih/posodobljenih VoziloPodrobnosti: {imported_podrobnosti_count}"))
             except FileNotFoundError:
                 self.stdout.write(self.style.WARNING(f"Opozorilo: Datoteka {vozilopodrobnosti_csv_path} ni najdena. Preskakujem uvoz podrobnosti vozil."))

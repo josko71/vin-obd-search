@@ -7,7 +7,7 @@ from django.conf import settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'avto_vin_obd_projekt.settings')
 django.setup()
 
-from vozila.models import LokacijaOpis, Ilustracija, VoziloPodrobnosti
+from vozila.models import LokacijaOpis, Ilustracija, VoziloPodrobnosti, Znamka, TipVozila, CarModel
 
 def export_model_to_csv(model, file_path, field_names, required_fields=[]):
     """
@@ -21,18 +21,18 @@ def export_model_to_csv(model, file_path, field_names, required_fields=[]):
         
         for obj in model.objects.all():
             is_valid = True
-            row = []
             
             # Preverimo, ali so vsa zahtevana polja prisotna
             for required_field in required_fields:
                 if not getattr(obj, required_field, None):
                     is_valid = False
-                    print(f"Opozorilo: Preskakujem {model.__name__} (ID: {obj.id}), ker mu manjka polje '{required_field}'.")
+                    # print(f"Opozorilo: Preskakujem {model.__name__} (ID: {obj.id}), ker mu manjka polje '{required_field}'.")
                     break
             
             if not is_valid:
                 continue
 
+            row = []
             for field in field_names:
                 if field.endswith('_id'):
                     related_field_name = field[:-3]
@@ -54,16 +54,43 @@ if __name__ == '__main__':
         LokacijaOpis,
         os.path.join(csv_dir, 'lokacijaopis.csv'),
         ['id', 'opis', 'je_vin_lokacija', 'je_obd_lokacija'],
-        required_fields=['id', 'opis'] # Zahteva, da ima ID in opis
+        required_fields=['id', 'opis']
     )
     print("Uspešno izvoženo LokacijaOpis.")
+    
+    # Izvoz Znamka
+    export_model_to_csv(
+        Znamka,
+        os.path.join(csv_dir, 'znamke.csv'),
+        ['id', 'ime'],
+        required_fields=['id', 'ime']
+    )
+    print("Uspešno izvoženo Znamka.")
+    
+    # Izvoz TipVozila
+    export_model_to_csv(
+        TipVozila,
+        os.path.join(csv_dir, 'tipivozila.csv'),
+        ['id', 'ime'],
+        required_fields=['id', 'ime']
+    )
+    print("Uspešno izvoženo TipVozila.")
+
+    # Izvoz CarModel
+    export_model_to_csv(
+        CarModel,
+        os.path.join(csv_dir, 'carmodels.csv'),
+        ['id', 'znamka_id', 'ime', 'generacija', 'leto_izdelave', 'tip_vozila_id'],
+        required_fields=['id', 'znamka', 'tip_vozila']
+    )
+    print("Uspešno izvoženo CarModel.")
 
     # Izvoz Ilustracija
     export_model_to_csv(
         Ilustracija,
         os.path.join(csv_dir, 'ilustracije.csv'),
         ['id', 'carmodel_id', 'ime_slike'],
-        required_fields=['id', 'carmodel', 'ime_slike'] # Zahteva, da ima ID, carmodel in ime
+        required_fields=['id', 'carmodel', 'ime_slike']
     )
     print("Uspešno izvoženo Ilustracija.")
 
@@ -72,7 +99,7 @@ if __name__ == '__main__':
         VoziloPodrobnosti,
         os.path.join(csv_dir, 'vozilopodrobnosti.csv'),
         ['id', 'carmodel_id', 'opis', 'lokacija_opisa_id', 'vrednost'],
-        required_fields=['id', 'carmodel', 'lokacija_opisa', 'opis'] # Zahteva, da ima ID, carmodel, lokacijo in opis
+        required_fields=['id', 'carmodel', 'lokacija_opisa', 'opis']
     )
     print("Uspešno izvoženo VoziloPodrobnosti.")
 

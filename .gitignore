@@ -8,4 +8,4 @@ __pycache__/
 #db.json
 # Statične datoteke in medijske datoteke, ki se lahko generirajo
 /static_root/
-/media/
+#/media/
