@@ -74,8 +74,8 @@ WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
 # Zamenjava celotne sekcije za bazo podatkov z bolj zanesljivo konfiguracijo
 # ki uporablja dj_database_url
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
+    'default': dj_database_url.parse(
+        config('DATABASE_URL'),
         engine='django.db.backends.postgresql'  # DODAJ TO!
     )
 }
