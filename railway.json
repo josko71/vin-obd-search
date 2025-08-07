@@ -7,7 +7,7 @@
     ]
   },
   "deploy": {
-    "startCommand": "python manage.py migrate && gunicorn --bind 0.0.0.0:$PORT avto_vin_obd_projekt.wsgi:application"
+    "startCommand": "python manage.py migrate && gunicorn --bind 0.0.0.0:$PORT avto_vin_obd_projekt.wsgi.application"
   },
   "postDeploy": {
     "command": "python manage.py migrate"
