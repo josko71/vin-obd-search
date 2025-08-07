@@ -8,8 +8,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # 1. Pridobimo trenutno stanje
         ids = list(CarModel.objects.order_by('id').values_list('id', flat=True))
-        missing = sorted(set(range(1, max(ids)+1) - set(ids))
+        if not ids:
+            self.stdout.write(self.style.WARNING('Ni zapisov v bazi'))
+            return
+            
+        max_id = max(ids)
+        missing = sorted(set(range(1, max_id + 1)) - set(ids))
         
+        self.stdout.write(f"Število zapisov: {len(ids)}")
+        self.stdout.write(f"Zadnji ID: {max_id}")
         self.stdout.write(f"Manjkajoči ID-ji: {len(missing)}")
         
         # 2. Popravimo sekvenco (PostgreSQL)
@@ -21,12 +28,14 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS('✔ Sekvenca popravljena'))
         
-        # 3. Opcijsko: Zapolnitev vrzeli z začasnimi zapisi
-        if len(missing) > 1000:  # Samo če je veliko vrzeli
-            self.stdout.write("Začasno zapolnjevanje vrzeli...")
+        # 3. Opcijsko: Zapolnitev vrzeli
+        if len(missing) > 1000 and input('Želite zapolniti vrzeli? (da/ne): ') == 'da':
             from vozila.models import Znamka
             znamka = Znamka.objects.first()
-            
+            if not znamka:
+                self.stdout.write(self.style.ERROR('Ni znamke za ustvarjanje testnih zapisov'))
+                return
+                
             temp_models = [
                 CarModel(
                     znamka=znamka,
@@ -35,6 +44,5 @@ class Command(BaseCommand):
                 )
                 for i in missing[:1000]  # Omejimo na 1000 zapisov
             ]
-            CarModel.objects.bulk_create(temp_models, batch_size=500)
-            
-            self.stdout.write(f"Ustvarjenih {len(temp_models)} začasnih zapisov")
+            created = CarModel.objects.bulk_create(temp_models, batch_size=500)
+            self.stdout.write(f"Ustvarjenih {len(created)} začasnih zapisov")
