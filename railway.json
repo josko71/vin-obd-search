@@ -2,7 +2,14 @@
   "build": {
     "installCommand": "pip install --no-cache-dir -r requirements.txt",
     "aptPackages": [
-      "default-libmysqlclient-dev"
+      "default-libmysqlclient-dev",
+      "postgresql-client"
     ]
+  },
+  "deploy": {
+    "startCommand": "python manage.py migrate && gunicorn --bind 0.0.0.0:$PORT avto_vin_obd_projekt.wsgi:application"
+  },
+  "postDeploy": {
+    "command": "python manage.py migrate"
   }
 }
