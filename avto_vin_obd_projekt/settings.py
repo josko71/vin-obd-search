@@ -14,7 +14,7 @@ SECRET_KEY = config('SECRET_KEY', default='@yotrutest1267uz_k8554.*GC')
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 ROOT_URLCONF = 'avto_vin_obd_projekt.urls'
-PORT = os.getenv('PORT', '8000')  # Default to 8000 if not set
+PORT = int(os.environ.get('PORT', 8000))  # Ensure it's an integer
 
 # Varnostne nastavitve
 CSRF_TRUSTED_ORIGINS = config(
