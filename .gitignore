@@ -1,11 +1,40 @@
-# Virtualno okolje
-venv/
-*.pyc
+# Python
 __pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Občutljivi podatki
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+/media/
+/staticfiles/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment files
 .env
-#db.json
-# Statične datoteke in medijske datoteke, ki se lahko generirajo
-/static_root/
-#/media/
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.backup
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Railway
+.railway/

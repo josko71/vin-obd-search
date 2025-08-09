@@ -148,7 +148,7 @@ class Command(BaseCommand):
                 self.stderr.write(self.style.ERROR(f"Kritična napaka pri branju tipivozila.csv: {e}"))
             self.stdout.write("-" * 30)
 
-        # --- Uvoz CarModel ---
+           # --- Uvoz CarModel ---
         if not models_to_import or 'carmodels' in models_to_import:
             carmodels_csv_path = os.path.join(csv_dir, 'carmodels.csv')
             self.stdout.write(f"Uvažam CarModele iz: {carmodels_csv_path}")
@@ -162,24 +162,29 @@ class Command(BaseCommand):
                     reader = csv.DictReader(file, delimiter=';')
                     for row_num, row in enumerate(reader, 2):
                         try:
-                            required_fields = ['id', 'ime', 'znamka_id', 'tip_vozila_id']
+                            # Prilagojena zahtevana polja
+                            required_fields = ['id', 'ime', 'znamka_ime', 'tip_vozila_ime']
                             if not all(field in row and row[field].strip() for field in required_fields):
                                 self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Manjka zahtevano polje v carmodels.csv: {row}. Preskakujem."))
                                 continue
+
                             model_id = int(row['id'])
                             model_ime = self.clean_string(row['ime'])
-                            znamka_id_csv = int(row['znamka_id'])
-                            tip_vozila_id_csv = int(row['tip_vozila_id'])
+                            znamka_ime_csv = self.clean_string(row['znamka_ime']).lower()
+                            tip_vozila_ime_csv = self.clean_string(row['tip_vozila_ime']).lower()
+
                             try:
-                                znamka = Znamka.objects.get(id=znamka_id_csv)
-                            except Znamka.DoesNotExist:
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Znamka z ID {znamka_id_csv} ne obstaja v bazi. Preskakujem CarModel vrstico."))
+                                znamka = znamke_cache[znamka_ime_csv]
+                            except KeyError:
+                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Znamka z imenom '{znamka_ime_csv}' ne obstaja v bazi. Preskakujem CarModel vrstico."))
                                 continue
+
                             try:
-                                tip_vozila = TipVozila.objects.get(id=tip_vozila_id_csv)
-                            except TipVozila.DoesNotExist:
-                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Tip vozila z ID {tip_vozila_id_csv} ne obstaja v bazi. Preskakujem CarModel vrstico."))
+                                tip_vozila = tipi_vozila_cache[tip_vozila_ime_csv]
+                            except KeyError:
+                                self.stderr.write(self.style.ERROR(f"Vrstica {row_num}: Tip vozila z imenom '{tip_vozila_ime_csv}' ne obstaja v bazi. Preskakujem CarModel vrstico."))
                                 continue
+                            
                             with transaction.atomic():
                                 CarModel.objects.update_or_create(
                                     id=model_id,
