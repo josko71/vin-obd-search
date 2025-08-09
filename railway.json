@@ -3,6 +3,6 @@
     "installCommand": "pip install --no-cache-dir -r requirements.txt"
   },
   "deploy": {
-    "startCommand": "gunicorn avto_vin_obd_projekt.wsgi --bind 0.0.0.0:$PORT"
+    "startCommand": "gunicorn avto_vin_obd_projekt.wsgi --bind 0.0.0.0:$PORT --workers 3 --timeout 120"
   }
 }
