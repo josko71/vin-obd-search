@@ -43,6 +43,6 @@ COPY --from=build-stage /app/data_csv /app/data_csv
 RUN pip install --no-cache-dir -r requirements.txt
 
 ENV DJANGO_SETTINGS_MODULE=avto_vin_obd_projekt.settings
-EXPOSE 8000
+EXPOSE $PORT
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "avto_vin_obd_projekt.wsgi:application"]

@@ -1,10 +1,11 @@
-# settings/prod.py
+# settings/prod.py (produkcijska nastavitev Django aplikacije)
+import os
 from .base import *
 from decouple import config
 
 SECRET_KEY = config('SECRET_KEY')  # Will be pulled from Railway vars
 DEBUG = config('DEBUG', default=False, cast=bool)
-
+PORT = int(os.environ.get('PORT', 8000))  # Railway provides this dynamically
 # Produkcijska varnost
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
