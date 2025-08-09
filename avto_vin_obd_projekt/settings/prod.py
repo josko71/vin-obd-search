@@ -1,5 +1,9 @@
 # settings/prod.py
 from .base import *
+from decouple import config
+
+SECRET_KEY = config('SECRET_KEY')  # Will be pulled from Railway vars
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Produkcijska varnost
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
