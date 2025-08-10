@@ -15,12 +15,12 @@ WORKDIR /app
 # 2. Namestitev Python paketov
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
-    pip install alembic==1.13.3 && \
-    pip install --no-cache-dir -r requirements.txt --ignore-installed alembic
+    pip install --no-cache-dir -r requirements.txt
 
 # 3. Kopirajte kodo in skripto za zagon
 COPY . .
 
-# 4. Zagonska skripta
+# 4. Dodajte EXPOSE in ENTRYPOINT
+EXPOSE 8000
 RUN chmod +x start.sh
-CMD ["/bin/bash", "start.sh"]
+ENTRYPOINT ["/bin/bash", "start.sh"]
