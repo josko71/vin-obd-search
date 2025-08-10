@@ -2,8 +2,13 @@ FROM python:3.10-slim-buster
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# 1. Najprej posodobite seznam paketov z zanesljivim mirrorjem
+RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+    apt-get update || true
+
+# 2. Namestite odvisnosti s poskusom nadaljevanja ob delnih napakah
+RUN apt-get install -y --no-install-recommends --allow-unauthenticated \
     gcc \
     python3-dev \
     libpq-dev \
@@ -11,19 +16,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-
-RUN python manage.py collectstatic --noinput --clear
-
-CMD ["gunicorn", "avto_vin_obd_projekt.wsgi:application", \
-    "--bind", "0.0.0.0:$PORT", \
-    "--workers", "4", \
-    "--worker-class", "gthread", \
-    "--threads", "2", \
-    "--timeout", "120", \
-    "--log-level", "info"]
+CMD ["gunicorn", "avto_vin_obd_projekt.wsgi:application", "--bind", "0.0.0.0:$PORT"]
