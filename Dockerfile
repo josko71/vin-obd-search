@@ -19,3 +19,12 @@ RUN pip install alembic==1.13.3
 RUN pip install --no-cache-dir -r requirements.txt --ignore-installed alembic
 
 COPY . .
+
+# Skopirajte start.sh v Docker sliko
+COPY start.sh .
+
+# Dajte dovoljenja za izvajanje
+RUN chmod +x start.sh
+
+# Uporabite skripto kot ukaz za zagon
+CMD ["./start.sh"]
