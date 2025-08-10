@@ -4,7 +4,9 @@ from .base import *
 from decouple import config
 
 SECRET_KEY = config('SECRET_KEY')  # Will be pulled from Railway vars
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 PORT = int(os.environ.get('PORT', 8000))  # Railway provides this dynamically
 # Produkcijska varnost
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
