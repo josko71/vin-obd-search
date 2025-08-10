@@ -19,5 +19,3 @@ RUN pip install alembic==1.13.3
 RUN pip install --no-cache-dir -r requirements.txt --ignore-installed alembic
 
 COPY . .
-
-CMD ["gunicorn", "avto_vin_obd_projekt.wsgi:application", "--bind", "0.0.0.0:$PORT"]
