@@ -5,12 +5,12 @@ beautifulsoup4==4.13.4
 certifi==2025.7.9
 charset-normalizer==3.4.2
 decorator==5.2.1
-dj-database-url==3.0.1
+dj-database-url==2.1.0
 Django==5.2.4
 django-debug-toolbar==6.0.0
 et_xmlfile==2.0.0
 executing==2.2.0
-gunicorn==23.0.0
+gunicorn==21.2.0
 h11==0.16.0
 idna==3.10
 ipython==9.4.0
@@ -28,7 +28,7 @@ pexpect==4.9.0
 pickle-warehouse==0.1.1
 pillow==11.3.0
 prompt_toolkit==3.0.51
-psycopg2-binary==2.9.10
+psycopg2-binary==2.9.9
 ptyprocess==0.7.0
 pure_eval==0.2.3
 Pygments==2.19.2
@@ -54,5 +54,5 @@ tzdata==2025.2
 urllib3==2.5.0
 wcwidth==0.2.13
 websocket-client==1.8.0
-whitenoise==6.9.0
+whitenoise==6.6.0
 wsproto==1.2.0
