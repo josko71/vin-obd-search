@@ -1,17 +1,23 @@
-__pycache__
-*.pyc
+# Generated Python files
+__pycache__/
+*.py[co]
 *.pyo
 *.pyd
-.env
-.git
-.vscode
+
+# Environment files and virtual environments
+.env*
 .venv/
 venv/
+venv310/
+.git/
+.gitignore
+.vscode/
 
-# Datoteke, ki jih ne želimo na Railwayu
+# Individual files to ignore on Railway
 test_rdw_api.py
 rdw_top_brands.py
 rdw_importer.py
 export_data_to_csv.py
-debug_rdw.py 
-CarModelCheck.py  
+debug_rdw.py
+CarModelCheck.py
+secrets.json

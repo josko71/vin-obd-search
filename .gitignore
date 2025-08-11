@@ -1,56 +1,54 @@
-# Python
+# Generated Python files
 __pycache__/
-*.py[cod]
+*.py[co]
 *.so
+*.pyd
+
+# Virtual Environments
+venv/
+venv310/
+.venv/
 .Python
 env/
-venv/
 ENV/
 env.bak/
 venv.bak/
 
-# Django
+# Django-specific files
 *.log
 *.pot
-*.pyc
 db.sqlite3
 *.sqlite3
 /media/
 /staticfiles/
+static_root/
 
-# IDE
-.idea/
-.vscode/
+# Environment files
+.env*
+.env.*
+.env.local
+.env.development
+
+# Backup and temporary files
+*.bak
+*.backup
 *.swp
 *.swo
 
-# Environment files
-.env
-.env.local
-.env.*.local
-*.env.local
-.env.development
-
-# Backup files
-*.bak
-*.backup
-
-# OS
+# IDE and OS files
+.idea/
+.vscode/
 .DS_Store
 Thumbs.db
 
-# Railway
-.railway/.env
-.env
-.env
+# Pip and Dependency files
+requirements-dev.txt
 
-#json
-secrets.json
-
-# Posamične datoteke, ki jih ne želimo na GitHubu
+# Individual files to ignore
 test_rdw_api.py
 rdw_top_brands.py
 rdw_importer.py
 export_data_to_csv.py
-debug_rdw.py 
+debug_rdw.py
 CarModelCheck.py
+secrets.json
