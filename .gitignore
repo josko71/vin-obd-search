@@ -9,6 +9,8 @@ venv/
 venv310/
 .venv/
 .Python
+Python-3.10.13/
+data_csv/
 env/
 ENV/
 env.bak/
