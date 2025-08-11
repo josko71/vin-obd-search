@@ -46,3 +46,11 @@ Thumbs.db
 
 #json
 secrets.json
+
+# Posamične datoteke, ki jih ne želimo na GitHubu
+test_rdw_api.py
+rdw_top_brands.py
+rdw_importer.py
+export_data_to_csv.py
+debug_rdw.py 
+CarModel.py
