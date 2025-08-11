@@ -5,3 +5,8 @@ __pycache__
 .env
 .git
 .vscode
+.venv/
+venv/
+
+# Datoteke, ki jih ne želimo na Railwayu
+test_rdw_api.py
