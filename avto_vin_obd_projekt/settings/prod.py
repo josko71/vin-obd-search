@@ -1,14 +1,17 @@
 # settings/prod.py (produkcijska nastavitev Django aplikacije)
 import os
-from .base import *
-from decouple import config
+import dj_database_url
+from decouple import config, Csv
 
-SECRET_KEY = config('SECRET_KEY')  # Will be pulled from Railway vars
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
-PORT = int(os.environ.get('PORT', 8000))  # Railway provides this dynamically
-# Produkcijska varnost
+from .base import *
+
+# Preberite ključne spremenljivke iz okolja
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+
+# Railway specifične nastavitve
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.railway.app', cast=Csv())
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
@@ -20,12 +23,15 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 
-# Railway specifične nastavitve
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='https://*.railway.app', cast=Csv())
+# Konfiguracija baze podatkov
 DATABASES = {
     'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=True   
+        ssl_require=True
     )
 }
+
+# Samodejna nastavitev porta (to je v redu)
+PORT = int(os.environ.get('PORT', 8000))
