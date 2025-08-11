@@ -1,5 +1,5 @@
 import requests
-
+# RDW API Test Script: # This script connects to the RDW Open Data API to fetch vehicle data. 
 RDW_DOMAIN = "opendata.rdw.nl"
 RDW_DATASET_ID = "m8mv-xtjm"
 APP_TOKEN = "UVsQU5u8wr4RLiHXNaQOpknbs" # Uporabi svoj token tukaj!

@@ -1,0 +1,6 @@
+-r requirements.txt
+python-dotenv==1.0.1
+python-decouple==3.8
+
+# za razvojne namene
+
