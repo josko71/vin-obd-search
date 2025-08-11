@@ -10,3 +10,7 @@ venv/
 
 # Datoteke, ki jih ne želimo na Railwayu
 test_rdw_api.py
+scraping.py
+rdw_top_brands.py
+rdw_importer.py
+export_data_to_csv.py
