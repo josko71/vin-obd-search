@@ -1,20 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
-# Preveri, ali je PORT nastavljen in mu določi privzeto vrednost, če ni
-PORT=${PORT:-8000}
+# Set Django settings module
+export DJANGO_SETTINGS_MODULE=avto_vin_obd_projekt.settings.prod
 
-# Uveljavite migracije
-echo "Applying database migrations..."
+# Apply database migrations
 python manage.py migrate
 
-# Zberite statične datoteke
-echo "Collecting static files..."
+# Collect static files
 python manage.py collectstatic --noinput
 
-# Zaženite Gunicorn strežnik
-echo "Starting Gunicorn server..."
-exec gunicorn avto_vin_obd_projekt.wsgi:application \
-    --bind 0.0.0.0:$PORT \
-    --workers 3 \
-    --timeout 120 \
-    --preload
+# Start Gunicorn server
+gunicorn avto_vin_obd_projekt.wsgi:application --bind 0.0.0.0:$PORT
