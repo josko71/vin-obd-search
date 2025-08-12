@@ -1,3 +1,7 @@
+
+
+
+
 avto_vin_obd_projekt/: glavna mapa z nastavitvami.
 
 media/ilustracije/: medijske datoteke, kot so slike.
