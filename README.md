@@ -1,7 +1,7 @@
-# Ime Projekta: Iskanje avtomobilov VIN/OBD
+# Ime Projekta: Iskanje lokacije številke VIN in priključka OBD na vozilih
 
 ## O projektu
-Dobrodošli pri projektu **Iskanje avtomobilov VIN/OBD**! Ta spletna aplikacija je namenjena iskanju oz. pridobivanju podatkov o lokaciji vtisnjene  identifikacijske številke vozila oz. VIN (vehicle identification number) številke in iskanju lokaciji OBD priključka (za osebna vozila in lahka gospodarska vozila).  
+Dobrodošli pri projektu **Iskanje VIN/OBD**! Ta spletna aplikacija je namenjena iskanju oz. pridobivanju podatkov o lokaciji vtisnjene  identifikacijske številke vozila oz. VIN (vehicle identification number) številke in iskanju lokaciji OBD priključka (za osebna vozila in lahka gospodarska vozila).  
 
 **Ključne funkcionalnosti:**
 -   **Iskanje po ZNAMKI, TIPU in MODELU vozila:** Izberite Znamko in/ali TIP in/ali MODEL vozila in po potrebi še LETO IZDELAVE od-do in/ali vnestite KLJUČNO BESEDO za iskanje po VIN ali OBD lokaciji ter pritisnite gumb Išči vozila. V rezulatitih iskanja se bodo prikazali rezultati iskanja oz. opis in ilustracija lokacije VIN in/ali OBD za iskana vozila.
