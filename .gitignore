@@ -47,6 +47,7 @@ Thumbs.db
 requirements-dev.txt
 
 # Individual files to ignore
+README.dev.md
 test_rdw_api.py
 rdw_top_brands.py
 rdw_importer.py

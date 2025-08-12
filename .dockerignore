@@ -14,6 +14,7 @@ venv310/
 .vscode/
 
 # Individual files to ignore on Railway
+README.dev.md
 test_rdw_api.py
 rdw_top_brands.py
 rdw_importer.py
