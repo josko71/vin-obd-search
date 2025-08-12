@@ -9,5 +9,3 @@ pandas
 numpy
 
 # za Raillway API
-
-python-decouple
