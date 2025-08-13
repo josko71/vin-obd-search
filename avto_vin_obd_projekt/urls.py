@@ -10,17 +10,14 @@ urlpatterns = [
     path('ajax/get_models/', vozila_views.get_models_ajax, name='get_models_ajax'),
 ]
 
-# Serviranje statičnih in medijskih datotek samo v razvoju (lokalno)
+# Serviranje medijskih in statičnih datotek samo v razvoju
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     
-    # Debug toolbar (samo če je nameščeno)
+    # Debug toolbar
     if 'debug_toolbar' in settings.INSTALLED_APPS:
         import debug_toolbar
         urlpatterns = [
             path('__debug__/', include(debug_toolbar.urls)),
         ] + urlpatterns
-
-# Serviranje medijskih datotek v produkciji (na Railwayu)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

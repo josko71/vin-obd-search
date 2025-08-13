@@ -1,18 +1,17 @@
-# settings/base.py
 import os
 from pathlib import Path
 import dj_database_url
 from decouple import config, Csv
-import warnings
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Osnovne nastavitve
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = False  # Privzeto false, prepisano v dev.py
+DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 ROOT_URLCONF = 'avto_vin_obd_projekt.urls'
 WSGI_APPLICATION = 'avto_vin_obd_projekt.wsgi.application'
+
 # Aplikacije in middleware
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -35,25 +34,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ... (vse ostale skupne nastavitve iz vašega settings.py)
-# Vključno z DATABASES, TEMPLATES, AUTH_PASSWORD_VALIDATORS itd.
-# Vse nastavitve, ki so enake za vse okolje
-
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# Dodamo pot do map za medije v STATICFILES_DIRS
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), BASE_DIR / 'media' / 'ilustracije']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/ilustracije/'
 MEDIA_ROOT = BASE_DIR / 'media' / 'ilustracije'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,  # TO JE KLJUČNO!
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -64,3 +60,10 @@ TEMPLATES = [
         },
     },
 ]
+
+# Nastavitve baze podatkov
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
+}
