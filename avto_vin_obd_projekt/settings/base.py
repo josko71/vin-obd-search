@@ -45,13 +45,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/ilustracije/'
 MEDIA_ROOT = BASE_DIR / 'media' / 'ilustracije'
 
-# Ključni popravek: Vključite MEDIA_ROOT v STATICFILES_DIRS, da bo WhiteNoise serviral tudi medije.
-# To je standardna praksa za produkcijske strežnike, kjer se uporablja WhiteNoise
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-    MEDIA_ROOT, # Dodajanje media root v seznam za static files
-]
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

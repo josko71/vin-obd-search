@@ -66,7 +66,6 @@ class CarModel(models.Model):
 class Ilustracija(models.Model):
     slika = models.ImageField(upload_to='', verbose_name="Slika ilustracije")
     opis = models.CharField(max_length=255, blank=True, null=True, verbose_name="Opis ilustracije")
-
     # Dodajte ti dve polji
     je_vin_ilustracija = models.BooleanField(default=False, verbose_name="Je VIN ilustracija")
     je_obd_ilustracija = models.BooleanField(default=False, verbose_name="Je OBD ilustracija")
