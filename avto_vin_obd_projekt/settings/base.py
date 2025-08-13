@@ -42,8 +42,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
-MEDIA_URL = '/media/ilustracije/'
-MEDIA_ROOT = BASE_DIR / 'media' / 'ilustracije'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'    
 
 TEMPLATES = [
     {
