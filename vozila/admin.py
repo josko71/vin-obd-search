@@ -1,11 +1,34 @@
+# vozila/admin.py
+
 from django.contrib import admin
-from .models import Znamka, CarModel, TipVozila, Ilustracija, VoziloPodrobnosti, LokacijaOpis 
+from .models import Znamka, CarModel, TipVozila, Ilustracija, VoziloPodrobnosti, LokacijaOpis
+
+# --- Dodane admin akcije za LokacijaOpis ---
+@admin.action(description='Označi izbrane kot VIN lokacija')
+def oznaci_kot_vin_lokacija(modeladmin, request, queryset):
+    queryset.update(je_vin_lokacija=True)
+
+@admin.action(description='Označi izbrane kot OBD lokacija')
+def oznaci_kot_obd_lokacija(modeladmin, request, queryset):
+    queryset.update(je_obd_lokacija=True)
+
+@admin.action(description='Odstrani oznako VIN lokacija')
+def odstrani_oznako_vin_lokacija(modeladmin, request, queryset):
+    queryset.update(je_vin_lokacija=False)
+    
+@admin.action(description='Odstrani oznako OBD lokacija')
+def odstrani_oznako_obd_lokacija(modeladmin, request, queryset):
+    queryset.update(je_obd_lokacija=False)
+# -----------------------------------------------
 
 @admin.register(LokacijaOpis)
 class LokacijaOpisAdmin(admin.ModelAdmin):
-    list_display = ('opis', 'je_vin_lokacija', 'je_obd_lokacija') 
-    list_filter = ('je_vin_lokacija', 'je_obd_lokacija') 
+    list_display = ('opis', 'je_vin_lokacija', 'je_obd_lokacija')  
+    list_filter = ('je_vin_lokacija', 'je_obd_lokacija')
     search_fields = ('opis',)
+    # --- Dodane akcije v admin panel ---
+    actions = [oznaci_kot_vin_lokacija, oznaci_kot_obd_lokacija, odstrani_oznako_vin_lokacija, odstrani_oznako_obd_lokacija]
+    # -----------------------------------
 
 @admin.register(Znamka)
 class ZnamkaAdmin(admin.ModelAdmin):
@@ -20,9 +43,16 @@ class TipVozilaAdmin(admin.ModelAdmin):
 
 @admin.register(Ilustracija)
 class IlustracijaAdmin(admin.ModelAdmin):
-    list_display = ('opis', 'slika', 'je_vin_ilustracija', 'je_obd_ilustracija') 
-    list_filter = ('je_vin_ilustracija', 'je_obd_ilustracija') 
+    list_display = ('opis', 'slika', 'je_vin_ilustracija', 'je_obd_ilustracija')
+    list_filter = ('je_vin_ilustracija', 'je_obd_ilustracija')
     search_fields = ('opis',)
+    # --- Dodane akcije za Ilustracije, če jih potrebujete ---
+    actions = [
+        # Sem lahko dodate podobne akcije kot za LokacijaOpis, npr:
+        # oznaci_ilustracijo_kot_vin,
+        # oznaci_ilustracijo_kot_obd,
+    ]
+    # --------------------------------------------------------
 
 @admin.register(CarModel)
 class CarModelAdmin(admin.ModelAdmin):
@@ -55,7 +85,7 @@ class VoziloPodrobnostiAdmin(admin.ModelAdmin):
         'lokacija_obd_opis__opis',
         'opombe'
     )
-    raw_id_fields = ('car_model',) 
+    raw_id_fields = ('car_model',)
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "lokacija_vin_opis":
