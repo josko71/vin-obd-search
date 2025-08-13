@@ -38,7 +38,7 @@ MIDDLEWARE = [
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Dodamo pot do map za medije v STATICFILES_DIRS
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), BASE_DIR / 'media' / 'ilustracije']
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files

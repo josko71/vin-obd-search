@@ -10,7 +10,6 @@ urlpatterns = [
     path('ajax/get_models/', vozila_views.get_models_ajax, name='get_models_ajax'),
 ]
 
-# Serviranje medijskih in statičnih datotek samo v razvoju
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

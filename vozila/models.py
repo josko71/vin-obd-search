@@ -64,7 +64,7 @@ class CarModel(models.Model):
         return f"{display_name} {' '.join(parts)}".strip()
 
 class Ilustracija(models.Model):
-    slika = models.ImageField(upload_to='ilustracije/', verbose_name="Slika ilustracije")
+    slika = models.ImageField(upload_to='', verbose_name="Slika ilustracije")
     opis = models.CharField(max_length=255, blank=True, null=True, verbose_name="Opis ilustracije")
 
     # Dodajte ti dve polji
