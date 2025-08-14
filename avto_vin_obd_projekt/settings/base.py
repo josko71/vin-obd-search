@@ -35,8 +35,8 @@ MIDDLEWARE = [
 ]
 
 # Media files morajo biti definirani pred STATICFILES_DIRS
-MEDIA_URL = '/media/ilustracije/'
-MEDIA_ROOT = BASE_DIR / 'media' / 'ilustracije'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'  
 
 # Static files
 STATIC_URL = '/static/'
