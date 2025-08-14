@@ -34,16 +34,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Media files morajo biti definirani pred STATICFILES_DIRS
+MEDIA_URL = '/media/ilustracije/'
+MEDIA_ROOT = BASE_DIR / 'media' / 'ilustracije'
+
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# Dodamo pot do map za medije v STATICFILES_DIRS
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Media files
-MEDIA_URL = '/media/ilustracije/'
-MEDIA_ROOT = BASE_DIR / 'media' / 'ilustracije'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    MEDIA_ROOT,
+]
 
 TEMPLATES = [
     {
