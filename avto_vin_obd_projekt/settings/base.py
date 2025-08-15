@@ -86,7 +86,7 @@ AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
-#AWS_S3_VERIFY = True
+AWS_S3_VERIFY = True
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 # Nastavite Django, da za medije uporablja storitev S3
