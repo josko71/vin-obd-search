@@ -3,6 +3,7 @@ from pathlib import Path
 import dj_database_url
 from decouple import config, Csv
 
+ROOT_URLCONF = 'avto_vin_obd_projekt.urls'
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # ... (ostale nastavitve, kot so SECRET_KEY, DEBUG, itd.)
