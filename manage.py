@@ -3,9 +3,10 @@
 import os
 import sys
 
-
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'avto_vin_obd_projekt.settings.dev')  # Spremenite v .prod za produkcijo
+    # Uporabi spremenljivko iz okolja, če obstaja, sicer privzeto production
+    settings_module = os.environ.get('DJANGO_SETTINGS_MODULE', 'avto_vin_obd_projekt.settings.production')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
