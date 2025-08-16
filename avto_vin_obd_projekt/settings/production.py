@@ -48,16 +48,24 @@ MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaw
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {name} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'level': 'DEBUG',  # Spremenjeno iz privzetega
+            'level': 'DEBUG',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
             'level': 'INFO',
+            'propagate': True,
         },
         'storages': {
             'handlers': ['console'],
@@ -69,7 +77,12 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'botocore': {  # Dodaj botocore za dodatne S3 napake
+        'botocore': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.request': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
