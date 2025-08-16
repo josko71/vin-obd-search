@@ -18,7 +18,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
 
 # URL, na katerega Django kaže, da bi našel medijske datoteke
 MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/ilustracije/"
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGGING = {
       'version': 1,
       'disable_existing_loggers': False,
