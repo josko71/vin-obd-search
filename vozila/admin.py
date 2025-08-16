@@ -1,9 +1,8 @@
-# vozila/admin.py
-
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from .models import Znamka, CarModel, TipVozila, Ilustracija, VoziloPodrobnosti, LokacijaOpis
 
-# --- Dodane admin akcije za LokacijaOpis ---
+# --- Admin akcije za LokacijaOpis ---
 @admin.action(description='Označi izbrane kot VIN lokacija')
 def oznaci_kot_vin_lokacija(modeladmin, request, queryset):
     queryset.update(je_vin_lokacija=True)
@@ -26,9 +25,7 @@ class LokacijaOpisAdmin(admin.ModelAdmin):
     list_display = ('opis', 'je_vin_lokacija', 'je_obd_lokacija')  
     list_filter = ('je_vin_lokacija', 'je_obd_lokacija')
     search_fields = ('opis',)
-    # --- Dodane akcije v admin panel ---
     actions = [oznaci_kot_vin_lokacija, oznaci_kot_obd_lokacija, odstrani_oznako_vin_lokacija, odstrani_oznako_obd_lokacija]
-    # -----------------------------------
 
 @admin.register(Znamka)
 class ZnamkaAdmin(admin.ModelAdmin):
@@ -46,13 +43,7 @@ class IlustracijaAdmin(admin.ModelAdmin):
     list_display = ('opis', 'slika', 'je_vin_ilustracija', 'je_obd_ilustracija')
     list_filter = ('je_vin_ilustracija', 'je_obd_ilustracija')
     search_fields = ('opis',)
-    # --- Dodane akcije za Ilustracije, če jih potrebujete ---
-    actions = [
-        # Sem lahko dodate podobne akcije kot za LokacijaOpis, npr:
-        # oznaci_ilustracijo_kot_vin,
-        # oznaci_ilustracijo_kot_obd,
-    ]
-    # --------------------------------------------------------
+    actions = []
 
 @admin.register(CarModel)
 class CarModelAdmin(admin.ModelAdmin):
@@ -60,6 +51,7 @@ class CarModelAdmin(admin.ModelAdmin):
     list_filter = ('znamka', 'tip_vozila', 'leto_izdelave')
     search_fields = ('ime', 'znamka__ime', 'generacija')
     ordering = ('znamka__ime', 'ime', '-leto_izdelave')
+    # Akcije niso več definirane
 
 @admin.register(VoziloPodrobnosti)
 class VoziloPodrobnostiAdmin(admin.ModelAdmin):
@@ -94,7 +86,7 @@ class VoziloPodrobnostiAdmin(admin.ModelAdmin):
             kwargs["queryset"] = LokacijaOpis.objects.filter(je_obd_lokacija=True).order_by('-opis')
         elif db_field.name == "ilustracija_vin":
             kwargs["queryset"] = Ilustracija.objects.filter(je_vin_ilustracija=True).order_by('opis')
-        elif db_field.name == "ilustracija_obd":
+        elif db_field.name == "ilustracija_obd": # Popravljena napaka: db v db_field
             kwargs["queryset"] = Ilustracija.objects.filter(je_obd_ilustracija=True).order_by('opis')
             
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

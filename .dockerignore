@@ -20,5 +20,4 @@ rdw_top_brands.py
 rdw_importer.py
 export_data_to_csv.py
 debug_rdw.py
-CarModelCheck.py
 secrets.json

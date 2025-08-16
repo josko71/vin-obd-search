@@ -21,3 +21,11 @@ DATABASES = {
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda request: True
 }
+
+# ===== Medijske datoteke (Slike) za LOKALNI RAZVOJ =====
+# Uporaba lokalnega datotečnega sistema namesto AWS S3.
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+# Poti do medijskih datotek na lokalnem disku.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
