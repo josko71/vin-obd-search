@@ -51,6 +51,7 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'level': 'DEBUG',  # Spremenjeno iz privzetega
         },
     },
     'loggers': {
@@ -64,6 +65,11 @@ LOGGING = {
             'propagate': False,
         },
         'boto3': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'botocore': {  # Dodaj botocore za dodatne S3 napake
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
