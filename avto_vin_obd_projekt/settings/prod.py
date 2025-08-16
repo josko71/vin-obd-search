@@ -7,7 +7,7 @@ from .base import *
 
 # Preberite ključne spremenljivke iz okolja
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool) # Debug naj bo False v produkciji
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 # Railway specifične nastavitve
