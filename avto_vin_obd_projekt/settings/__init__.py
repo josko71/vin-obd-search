@@ -1,2 +1,2 @@
 # settings/__init__.py
-from .dev import *    
+from .production import *    
