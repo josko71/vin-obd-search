@@ -40,7 +40,7 @@ AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_VERIFY = True
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/ilustracije/"
+MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
 # Odstrani MEDIA_ROOT, ker ni potreben za S3
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
